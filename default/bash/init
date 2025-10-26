@@ -1,4 +1,9 @@
-if command -v mise &> /dev/null; then
+# Only for interactive shells
+if [[ $- != *i* ]]; then
+  return 0
+fi
+
+if command -v mise &>/dev/null; then
   eval "$(mise activate bash)"
 fi
 
@@ -10,11 +15,16 @@ if command -v zoxide &> /dev/null; then
   eval "$(zoxide init bash)"
 fi
 
-if command -v fzf &> /dev/null; then
-  if [[ -f /usr/share/fzf/completion.bash ]]; then
-    source /usr/share/fzf/completion.bash
-  fi
-  if [[ -f /usr/share/fzf/key-bindings.bash ]]; then
-    source /usr/share/fzf/key-bindings.bash
+# fzf: key-bindings now; completion lazy on first TAB
+if command -v fzf &>/dev/null; then
+  [[ -f /usr/share/fzf/key-bindings.bash ]] && source /usr/share/fzf/key-bindings.bash
+  if shopt -q progcomp 2>/dev/null && [[ -f /usr/share/fzf/completion.bash ]]; then
+    _lazy_fzf_comp() {
+      bind -r '"\t"' 2>/dev/null || true
+      source /usr/share/fzf/completion.bash
+      builtin bind '"\t":complete'
+      READLINE_LINE=$READLINE_LINE; READLINE_POINT=$READLINE_POINT
+    }
+    bind -x '"\t":_lazy_fzf_comp'
   fi
 fi

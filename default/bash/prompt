@@ -1,3 +1,6 @@
+# Prompt is only meaningful for interactive shells
+[[ $- == *i* ]] || return 0
+
 # Technicolor dreams
 force_color_prompt=yes
 color_prompt=yes
