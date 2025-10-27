@@ -3,7 +3,7 @@ if [[ $- != *i* ]]; then
   return 0
 fi
 
-if command -v mise &>/dev/null; then
+if command -v mise &> /dev/null; then
   eval "$(mise activate bash)"
 fi
 
